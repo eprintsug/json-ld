@@ -3,13 +3,29 @@ Export plugin to transform selected metadata to json linked data to provide stru
 
 ## About this plugin
 
-This Export plugin is specifically designed for the metadata collected in the [University of Bath Research Data Archive](http://researchdata.bath.ac.uk/).
+This Export plugin was initially specifically designed for the metadata collected in the [University of Bath Research Data Archive](http://researchdata.bath.ac.uk/).
 
 It can be used as is, but will be most effective if you check the mapping of fields against the specification for datasets structured data linked below.
+
+The plugin was generalized by mapping EPrints document types in the following way:
+
+| schema.org @type | eprints document type |
+| ---------------- | ----------------------|
+| CreativeWork | default type for all unless it is a thesis, dataset, article, book_section or book |
+| Thesis | thesis |
+| Dataset | dataset |
+| Article | article |
+| Chapter | book_section |
+| Book | book |
+
 
 ## Installation
 
 Copy the file to the corresponding location in your EPrints archive (where [name] is the name of your archive).
+
+To make the export appear in the <head> as a JavaScript, add the following line to your archives/[name]/cfg/cfg.d/eprint_render.pl
+
+$links->appendChild( $session->plugin( "Export::JSONLD" )->dataobj_to_html_header( $eprint ) );
 
 ## Mapping
 
