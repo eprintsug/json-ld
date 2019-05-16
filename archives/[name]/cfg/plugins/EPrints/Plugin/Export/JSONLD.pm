@@ -128,7 +128,7 @@ sub convert_dataobj
 			{	
 				my %person;
 				$person{'@type'} = "Person";
-				$person{'@id'} = 'http://orcid.org/' . $creator->{orcid} if defined $creator->{orcid};
+				$person{'@id'} = 'http://orcid.org/' . $creator->{orcid} if (defined ($creator->{orcid}) && $creator->{orcid} ne '');
 				my $name = $creator->{name};
 				$person{familyName} = $name->{family} if defined $name->{family};
 				$person{givenName} = $name->{given} if defined $name->{given};
