@@ -14,7 +14,7 @@ The plugin was generalized by mapping EPrints document types in the following wa
 | CreativeWork | default type for all unless it is a thesis, dataset, article, book_section or book |
 | Thesis | thesis |
 | Dataset | dataset |
-| Article | article |
+| ScholarlyArticle | article |
 | Chapter | book_section |
 | Book | book |
 
