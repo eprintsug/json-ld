@@ -62,7 +62,7 @@ sub convert_dataobj
 			$jsonldata{'@type'} = "Dataset";
 		}
 		elsif ( $eprint->get_value( "type" ) eq "article" ){
-			$jsonldata{'@type'} = "Article";
+			$jsonldata{'@type'} = "ScholarlyArticle";
 		}
 		elsif ( $eprint->get_value( "type" ) eq "book_section" ){
 			$jsonldata{'@type'} = "Chapter";
