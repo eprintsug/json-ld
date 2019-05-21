@@ -17,6 +17,7 @@ The plugin was generalized by mapping EPrints document types in the following wa
 | ScholarlyArticle | article |
 | Chapter | book_section |
 | Book | book |
+| graph | list of eprints from browse views or search results |
 
 
 ## Installation
