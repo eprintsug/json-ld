@@ -20,12 +20,64 @@ sub new
 	my $self = $class->SUPER::new( %params );
 
 	$self->{name} = "JSON LD";
-	$self->{accept} = [ 'dataobj/eprint' ];
+	$self->{accept} = [ 'dataobj/eprint', 'list/eprint' ];
 	$self->{visible} = "all";
 	$self->{suffix} = ".js";
 	$self->{mimetype} = "application/json; charset=utf-8";
 
 	return $self;
+}
+
+sub output_list
+{
+	my( $self, %opts ) = @_;
+
+	my $r = [];
+	my $part;
+	$part = "{\"\@context\": \"http://schema.org\",\"\@graph\": [\n";
+	if( defined $opts{fh} )
+	{
+		print {$opts{fh}} $part;
+	}
+	else
+	{
+		push @{$r}, $part;
+	}
+
+	$opts{json_indent} = 1;
+	my $first = 1;
+	$opts{list}->map( sub {
+		my( $session, $dataset, $dataobj ) = @_;
+		my $part = "";
+		if( $first ) { $first = 0; } else { $part = ",\n"; }
+		$part .= $self->output_dataobj( $dataobj);
+		if( defined $opts{fh} )
+		{
+			print {$opts{fh}} $part;
+		}
+		else
+		{
+			push @{$r}, $part;
+		}
+	} );
+
+	$part= "\n]}\n\n";
+	if( defined $opts{fh} )
+	{
+		print {$opts{fh}} $part;
+	}
+	else
+	{
+		push @{$r}, $part;
+	}
+
+
+	if( defined $opts{fh} )
+	{
+		return;
+	}
+
+	return join( '', @{$r} );
 }
 
 sub dataobj_to_html_header
