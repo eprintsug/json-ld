@@ -33,7 +33,7 @@ $links->appendChild( $session->plugin( "Export::JSONLD" )->dataobj_to_html_heade
 | Property | Value |
 | -------- | ----- |
 | `@context` | http://schema.org/ |
-| `@type` | see Mapping EPrints Document Types bove |
+| `@type` | see Mapping EPrints Document Types above |
 | `url` | `doi` (formatted to url) if available, otherwise eprint `url` |
 | `@id` | `doi` (formatted to url) if available |
 | `sameAs` | eprint `url` (if doi used as url) |
