@@ -7,7 +7,7 @@ This Export plugin was initially specifically designed for the metadata collecte
 
 It can be used as is, but will be most effective if you check the mapping of fields against the specification for datasets structured data linked below.
 
-The plugin was generalized by mapping EPrints document types in the following way:
+The plugin was generalized by Mapping EPrints Document Types in the following way:
 
 | schema.org @type | eprints document type |
 | ---------------- | ----------------------|
@@ -33,7 +33,7 @@ $links->appendChild( $session->plugin( "Export::JSONLD" )->dataobj_to_html_heade
 | Property | Value |
 | -------- | ----- |
 | `@context` | http://schema.org/ |
-| `@type` | Dataset |
+| `@type` | see Mapping EPrints Document Types bove |
 | `url` | `doi` (formatted to url) if available, otherwise eprint `url` |
 | `@id` | `doi` (formatted to url) if available |
 | `sameAs` | eprint `url` (if doi used as url) |
