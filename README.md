@@ -20,6 +20,8 @@ The plugin was generalized by Mapping EPrints Document Types in the following wa
 
 For exporting a list of eprints from browse views or search results, the results are serialized as a JSON-LD graph.
 
+This export plugin is currently installed on  [Concordia University Research Repository](https://spectrum.library.concordia.ca/)
+
 ## Installation
 
 Copy the file to the corresponding location in your EPrints archive (where [name] is the name of your archive).
@@ -46,6 +48,8 @@ $links->appendChild( $session->plugin( "Export::JSONLD" )->dataobj_to_html_heade
 | `publisher` | `publisher` |
 
 ## Further information
+
+[Schema.org JSON-LD](https://schema.org/)
 
 [Datasets structured data information (Google)](https://developers.google.com/search/docs/data-types/datasets)
 
