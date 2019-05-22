@@ -26,7 +26,7 @@ This export plugin is currently installed on  [Concordia University Research Rep
 
 Copy the file to the corresponding location in your EPrints archive (where [name] is the name of your archive).
 
-To make the export appear in the <head> as a JavaScript, add the following line to your archives/[name]/cfg/cfg.d/eprint_render.pl
+To make the export appear in the head of abstract pages as a JavaScript, add the following line to your archives/[name]/cfg/cfg.d/eprint_render.pl
 
 $links->appendChild( $session->plugin( "Export::JSONLD" )->dataobj_to_html_header( $eprint ) );
 
