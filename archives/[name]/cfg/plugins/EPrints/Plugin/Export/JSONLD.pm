@@ -188,6 +188,21 @@ sub convert_dataobj
 			}
 		}
 	}
+	
+	if ( $eprint->exists_and_set( "corp_creators" ) ) {
+		my $corp_creators = $eprint->get_value( "corp_creators" );
+		if( defined $corp_creators )
+                {
+                        foreach my $corp_creator ( @{$corp_creators} )
+                        {
+                                my %corp;
+                                $corp{'@type'} = "Organization";
+                                $corp{name} = $corp_creator;
+                                push @{$jsonldata{creator}}, \%corp;
+                        }
+                }
+
+	}
 
 	
 	if( $eprint->exists_and_set( "date" ) ) {
