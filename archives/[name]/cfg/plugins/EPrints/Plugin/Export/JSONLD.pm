@@ -1,10 +1,10 @@
 =head1 NAME
 
-EPrints::Plugin::Export::UBJSONLD
+EPrints::Plugin::Export::JSONLD
 
 =cut
 
-package EPrints::Plugin::Export::UBJSONLD;
+package EPrints::Plugin::Export::JSONLD;
 
 use EPrints::Plugin::Export;
 
@@ -19,11 +19,65 @@ sub new
 
 	my $self = $class->SUPER::new( %params );
 
-	$self->{name} = "JSON LD for Datasets";
-	$self->{accept} = [ 'dataobj/eprint' ];
+	$self->{name} = "JSON LD";
+	$self->{accept} = [ 'dataobj/eprint', 'list/eprint' ];
 	$self->{visible} = "all";
+	$self->{suffix} = ".js";
+	$self->{mimetype} = "application/json; charset=utf-8";
 
 	return $self;
+}
+
+sub output_list
+{
+	my( $self, %opts ) = @_;
+
+	my $r = [];
+	my $part;
+	$part = "{\"\@context\": \"http://schema.org\",\"\@graph\": [\n";
+	if( defined $opts{fh} )
+	{
+		print {$opts{fh}} $part;
+	}
+	else
+	{
+		push @{$r}, $part;
+	}
+
+	$opts{json_indent} = 1;
+	my $first = 1;
+	$opts{list}->map( sub {
+		my( $session, $dataset, $dataobj ) = @_;
+		my $part = "";
+		if( $first ) { $first = 0; } else { $part = ",\n"; }
+		$part .= $self->output_dataobj( $dataobj);
+		if( defined $opts{fh} )
+		{
+			print {$opts{fh}} $part;
+		}
+		else
+		{
+			push @{$r}, $part;
+		}
+	} );
+
+	$part= "\n]}\n\n";
+	if( defined $opts{fh} )
+	{
+		print {$opts{fh}} $part;
+	}
+	else
+	{
+		push @{$r}, $part;
+	}
+
+
+	if( defined $opts{fh} )
+	{
+		return;
+	}
+
+	return join( '', @{$r} );
 }
 
 sub dataobj_to_html_header
@@ -32,7 +86,7 @@ sub dataobj_to_html_header
 
 	my $jsonld = $plugin->{session}->make_doc_fragment;
 
-	my $script_tag = $plugin->{session}->make_element( "script", type => "application/ld+json" );
+	my $script_tag = $plugin->{session}->make_element( "script", type => "application/ld+json", id => "jsonLinkedData" );
 	my $eprintld = $plugin->convert_dataobj( $dataobj );
 	my $json = JSON::to_json( $eprintld );
 	$script_tag->appendChild( $plugin->{session}->make_text( $json ) );
@@ -50,7 +104,25 @@ sub convert_dataobj
 	my %jsonldata;
 
 	$jsonldata{'@context'} = 'http://schema.org/';
-	$jsonldata{'@type'} = "Dataset";
+	$jsonldata{'@type'} = "CreativeWork";
+	
+	if ( $eprint->exists_and_set( "type" )){
+		if ($eprint->get_value( "type" ) eq "thesis" ){
+			$jsonldata{'@type'} = "Thesis";
+		}
+		elsif ($eprint->get_value( "type" ) eq "dataset" ){
+			$jsonldata{'@type'} = "Dataset";
+		}
+		elsif ( $eprint->get_value( "type" ) eq "article" ){
+			$jsonldata{'@type'} = "ScholarlyArticle";
+		}
+		elsif ( $eprint->get_value( "type" ) eq "book_section" ){
+			$jsonldata{'@type'} = "Chapter";
+		}
+		elsif ( $eprint->get_value( "type" ) eq "book" ){
+			$jsonldata{'@type'} = "Book";
+		}
+	}
 
 	# The DOI or if not set, URL of the landing page
 	if ( $eprint->exists_and_set( "doi" ) ) {
@@ -108,7 +180,7 @@ sub convert_dataobj
 			{	
 				my %person;
 				$person{'@type'} = "Person";
-				$person{'@id'} = 'http://orcid.org/' . $creator->{orcid} if defined $creator->{orcid};
+				$person{'@id'} = 'http://orcid.org/' . $creator->{orcid} if (defined ($creator->{orcid}) && $creator->{orcid} ne '');
 				my $name = $creator->{name};
 				$person{familyName} = $name->{family} if defined $name->{family};
 				$person{givenName} = $name->{given} if defined $name->{given};
@@ -116,7 +188,7 @@ sub convert_dataobj
 			}
 		}
 	}
-
+	
 	if ( $eprint->exists_and_set( "corp_creators" ) ) {
 		my $corp_creators = $eprint->get_value( "corp_creators" );
 		if( defined $corp_creators )
@@ -132,6 +204,7 @@ sub convert_dataobj
 
 	}
 
+	
 	if( $eprint->exists_and_set( "date" ) ) {
 		my @date = split( "-", $eprint->get_value( "date" ) );
 		$jsonldata{datePublished} = $date[0];
@@ -147,5 +220,24 @@ sub convert_dataobj
 	return \%jsonldata;
 }
 
-1;
+sub output_dataobj_html
+{
+	my( $plugin, $dataobj ) = @_;
 
+	my $json = $plugin->convert_dataobj( $dataobj );
+
+	return $plugin->dataobj_to_html_header( $dataobj );
+}
+
+sub output_dataobj
+{
+
+	my( $plugin, $dataobj ) = @_;
+
+	my $eprintld = $plugin->convert_dataobj( $dataobj );
+	my $json = JSON::to_json( $eprintld );
+
+	return $json;
+}
+
+1;
