@@ -184,6 +184,7 @@ sub convert_dataobj
 				my $name = $creator->{name};
 				$person{familyName} = $name->{family} if defined $name->{family};
 				$person{givenName} = $name->{given} if defined $name->{given};
+				$person{name} = $person{givenName}." ".$person{familyName};
 				push @{$jsonldata{creator}}, \%person;
 			}
 		}
